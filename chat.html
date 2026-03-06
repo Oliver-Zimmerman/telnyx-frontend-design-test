@@ -101,7 +101,9 @@
     a { color: var(--text-links); text-decoration: none; }
     a:hover { text-decoration: underline; }
     h1 { font-family: var(--font-display); font-weight: 800; font-size: 24px; }
-    code { font-family: var(--font-mono); font-size: 13px; background: var(--feedback-neutral-fill); padding: 2px 6px; border-radius: var(--radius-2); }
+    code { font-family: var(--font-mono); font-size: 13px; background: var(--feedback-neutral-fill); color: var(--main-primary); padding: 2px 6px; border-radius: var(--radius-2); }
+    .message.outgoing .message-bubble code { background: rgba(255,255,255,0.15); color: var(--neutrals-container); }
+    [data-theme="dark"] .message.outgoing .message-bubble code { background: rgba(255,255,255,0.1); color: var(--main-primary); }
 
     /* ── Sidebar ── */
     .sidebar {
