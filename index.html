@@ -4,8 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Telnyx Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    @font-face {
+      font-family: "PP Formula";
+      font-style: normal;
+      font-weight: 800;
+      font-display: swap;
+      ascent-override: 120%;
+      src: url("./fonts/PP Formula Extrabold.woff2") format("woff2");
+    }
+
     :root {
       --page-background: #FEFDF5;
       --main-primary: #101010;
@@ -34,7 +43,8 @@
       --payment-hover: #26E7B7;
       --generic-hover: rgba(150, 150, 150, 0.1);
       --font-body: 'Inter', sans-serif;
-      --font-display: 'Inter', sans-serif;
+      --font-display: 'PP Formula', sans-serif;
+      --font-mono: 'Roboto Mono', monospace;
       --radius-sm: 4px;
       --radius-md: 5px;
       --radius-pill: 20px;
@@ -42,13 +52,20 @@
       --shadow-default: 0 0 2px rgba(0,0,0,0.1), 0 2px 3.5px rgba(0,0,0,0.2);
       --shadow-shallow: 0 1.5px 2.5px rgba(0,0,0,0.2);
       --shadow-deep: 0 1.5px 2.5px rgba(0,0,0,0.1), 0 4.2px 8.4px rgba(0,0,0,0.1);
+      --shadow-deeper: 0 10px 15px rgba(0,0,0,0.2);
+      --shadow-modal: 0px 5px 20px rgba(0,0,0,0.5);
       --transition-fast: 0.15s;
       --transition-medium: 0.2s;
+      --transition-slow: 0.6s;
+      --space-1: 1.75px;
+      --space-2: 3.5px;
       --space-3: 7px;
       --space-4: 14px;
       --space-5: 20px;
       --space-6: 28px;
       --space-7: 40px;
+      --space-8: 56px;
+      --space-9: 80px;
     }
 
     [data-theme="dark"] {
@@ -134,8 +151,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      color: var(--neutrals-inactive);
     }
+    .sidebar-nav li.active .nav-icon { color: var(--main-primary); }
 
     /* Main */
     .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
@@ -197,6 +215,7 @@
     /* Content */
     .content { padding: var(--space-6); flex: 1; max-width: 1248px; }
     .page-title {
+      font-family: var(--font-display);
       font-size: 21px;
       font-weight: 800;
       letter-spacing: 0.02em;
@@ -227,16 +246,17 @@
     }
     .metric-card .value {
       font-size: 28px;
-      font-weight: 800;
+      font-weight: 600;
       color: var(--main-primary);
       letter-spacing: -0.01em;
     }
     .metric-card .change {
       font-size: 12px;
-      color: var(--feedback-success-outline);
       margin-top: var(--space-3);
       font-weight: 600;
     }
+    .metric-card .change.positive { color: var(--feedback-success-outline); }
+    .metric-card .change.negative { color: var(--feedback-error-outline); }
 
     /* Chart */
     .chart-section {
@@ -266,6 +286,7 @@
       background: transparent;
       color: var(--main-primary);
       font-family: var(--font-body);
+      text-transform: none;
       transition: background var(--transition-fast) ease;
     }
     .chart-tab:hover { background: var(--generic-hover); }
@@ -278,6 +299,13 @@
     .chart-area { height: 200px; }
     .chart-area svg { width: 100%; height: 100%; }
 
+    /* Bottom grid */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-5);
+    }
+
     /* Table */
     .table-section {
       background: var(--neutrals-container);
@@ -287,7 +315,7 @@
       box-shadow: var(--shadow-deep);
       transition: background var(--transition-medium) ease, border-color var(--transition-medium) ease;
     }
-    .table-title { font-size: 16px; font-weight: 600; margin-bottom: var(--space-4); }
+    .section-title { font-size: 18px; font-weight: 600; margin-bottom: var(--space-4); }
     table { width: 100%; border-collapse: collapse; font-size: 14px; font-family: var(--font-body); }
     th {
       text-align: left;
@@ -327,9 +355,80 @@
       color: var(--feedback-error-outline);
     }
 
+    /* Alert */
+    .alert {
+      border-radius: var(--radius-sm);
+      border: 1px solid;
+      padding: 16px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      margin-bottom: var(--space-5);
+    }
+    .alert-info {
+      background: var(--feedback-info-fill);
+      border-color: var(--feedback-info-outline);
+      color: var(--feedback-info-outline);
+    }
+
+    /* Quick actions */
+    .quick-actions {
+      background: var(--neutrals-container);
+      border: 1px solid var(--neutrals-outlines);
+      border-radius: var(--radius-sm);
+      padding: var(--space-5);
+      box-shadow: var(--shadow-deep);
+      transition: background var(--transition-medium) ease, border-color var(--transition-medium) ease;
+    }
+    .action-list { list-style: none; }
+    .action-list li {
+      padding: var(--space-3) 0;
+      border-bottom: 1px solid var(--neutrals-outlines);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      color: var(--neutrals-primary-hover);
+    }
+    .action-list li:last-child { border-bottom: none; }
+
+    .btn-primary {
+      background: var(--brand-primary);
+      color: var(--brand-secondary);
+      border: none;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 14px;
+      height: 26px;
+      padding: 0 10px;
+      cursor: pointer;
+      text-transform: none;
+      line-height: 1;
+      transition: background var(--transition-fast) ease;
+    }
+    .btn-primary:hover { background: var(--payment-hover); }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--main-primary);
+      border: 1.6px solid currentColor;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 14px;
+      height: 26px;
+      padding: 0 10px;
+      cursor: pointer;
+      text-transform: none;
+      line-height: 1;
+      transition: background var(--transition-fast) ease;
+    }
+    .btn-secondary:hover { background: var(--generic-hover); }
+
     /* Responsive */
     @media (max-width: 900px) {
       .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .bottom-grid { grid-template-columns: 1fr; }
       .sidebar { display: none; }
     }
     @media (max-width: 600px) {
@@ -359,14 +458,38 @@
       </svg>
     </div>
     <ul class="sidebar-nav">
-      <li class="active"><span class="nav-icon">📊</span> Dashboard</li>
-      <li><span class="nav-icon">📞</span> Phone Numbers</li>
-      <li><span class="nav-icon">💬</span> Messaging</li>
-      <li><span class="nav-icon">🎙️</span> Voice</li>
-      <li><span class="nav-icon">🔗</span> SIP Trunking</li>
-      <li><span class="nav-icon">📈</span> Analytics</li>
-      <li><span class="nav-icon">💳</span> Billing</li>
-      <li><span class="nav-icon">⚙️</span> Settings</li>
+      <li class="active">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="1" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="10" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="10" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/></svg></span>
+        Dashboard
+      </li>
+      <li>
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 1H7a2 2 0 00-2 2v12a2 2 0 002 2h4a2 2 0 002-2V3a2 2 0 00-2-2z" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="14" r="1" fill="currentColor"/></svg></span>
+        Phone Numbers
+      </li>
+      <li>
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 4a2 2 0 012-2h10a2 2 0 012 2v7a2 2 0 01-2 2H6l-3 3V4z" stroke="currentColor" stroke-width="1.5"/></svg></span>
+        Messaging
+      </li>
+      <li>
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 13V5a2 2 0 012-2h8a2 2 0 012 2v6a2 2 0 01-2 2H5l-3 3z" stroke="currentColor" stroke-width="1.5"/><path d="M6 7h6M6 10h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+        Voice
+      </li>
+      <li>
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 9h4l2-6 2 12 2-6h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        SIP Trunking
+      </li>
+      <li>
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 14l3-4 3 2 4-5 4 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        Analytics
+      </li>
+      <li>
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 9h8M5 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+        Billing
+      </li>
+      <li>
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M9 1v2M9 15v2M1 9h2M15 9h2M3.3 3.3l1.4 1.4M13.3 13.3l1.4 1.4M3.3 14.7l1.4-1.4M13.3 4.7l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+        Settings
+      </li>
     </ul>
   </aside>
   <div class="main">
@@ -390,30 +513,30 @@
 
       <div class="metrics-grid">
         <div class="metric-card">
-          <div class="label">Active Numbers</div>
+          <div class="label">ACTIVE NUMBERS</div>
           <div class="value">1,247</div>
-          <div class="change">↑ 12.5% vs last month</div>
+          <div class="change positive">+12.5% vs last month</div>
         </div>
         <div class="metric-card">
-          <div class="label">Messages Sent Today</div>
+          <div class="label">MESSAGES SENT TODAY</div>
           <div class="value">34,891</div>
-          <div class="change">↑ 8.2% vs yesterday</div>
+          <div class="change positive">+8.2% vs yesterday</div>
         </div>
         <div class="metric-card">
-          <div class="label">Call Minutes</div>
+          <div class="label">CALL MINUTES</div>
           <div class="value">12,403</div>
-          <div class="change">↑ 3.1% vs last week</div>
+          <div class="change positive">+3.1% vs last week</div>
         </div>
         <div class="metric-card">
-          <div class="label">Active SIP Connections</div>
+          <div class="label">ACTIVE SIP CONNECTIONS</div>
           <div class="value">89</div>
-          <div class="change">↑ 5 new this week</div>
+          <div class="change positive">+5 new this week</div>
         </div>
       </div>
 
       <div class="chart-section">
         <div class="chart-header">
-          <span class="chart-title">Message Volume (Last 7 Days)</span>
+          <h2 class="chart-title">Message Volume</h2>
           <div class="chart-tabs">
             <button class="chart-tab active">7D</button>
             <button class="chart-tab">30D</button>
@@ -438,56 +561,81 @@
         </div>
       </div>
 
-      <div class="table-section">
-        <div class="table-title">Recent Activity</div>
-        <table>
-          <thead>
-            <tr>
-              <th>Event</th>
-              <th>Number</th>
-              <th>Type</th>
-              <th>Status</th>
-              <th>Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Outbound SMS</td>
-              <td>+1 (555) 012-3456</td>
-              <td>SMS</td>
-              <td><span class="status-badge status-success">Delivered</span></td>
-              <td>2 min ago</td>
-            </tr>
-            <tr>
-              <td>Inbound Call</td>
-              <td>+1 (555) 987-6543</td>
-              <td>Voice</td>
-              <td><span class="status-badge status-success">Completed</span></td>
-              <td>15 min ago</td>
-            </tr>
-            <tr>
-              <td>Number Provisioned</td>
-              <td>+1 (555) 111-2222</td>
-              <td>DID</td>
-              <td><span class="status-badge status-pending">Pending</span></td>
-              <td>1 hour ago</td>
-            </tr>
-            <tr>
-              <td>SIP Registration</td>
-              <td>sip:trunk-04@sip.telnyx.com</td>
-              <td>SIP</td>
-              <td><span class="status-badge status-success">Active</span></td>
-              <td>3 hours ago</td>
-            </tr>
-            <tr>
-              <td>Outbound SMS Failed</td>
-              <td>+1 (555) 333-4444</td>
-              <td>SMS</td>
-              <td><span class="status-badge status-error">Failed</span></td>
-              <td>5 hours ago</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="bottom-grid">
+        <div class="table-section">
+          <h2 class="section-title">Recent Activity</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Event</th>
+                <th>Number</th>
+                <th>Status</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Outbound SMS</td>
+                <td>+1 (555) 012-3456</td>
+                <td><span class="status-badge status-success">Delivered</span></td>
+                <td>2 min ago</td>
+              </tr>
+              <tr>
+                <td>Inbound Call</td>
+                <td>+1 (555) 987-6543</td>
+                <td><span class="status-badge status-success">Completed</span></td>
+                <td>15 min ago</td>
+              </tr>
+              <tr>
+                <td>Number Provisioned</td>
+                <td>+1 (555) 111-2222</td>
+                <td><span class="status-badge status-pending">Pending</span></td>
+                <td>1 hour ago</td>
+              </tr>
+              <tr>
+                <td>SIP Registration</td>
+                <td>sip:trunk-04@sip.telnyx.com</td>
+                <td><span class="status-badge status-success">Active</span></td>
+                <td>3 hours ago</td>
+              </tr>
+              <tr>
+                <td>Outbound SMS</td>
+                <td>+1 (555) 333-4444</td>
+                <td><span class="status-badge status-error">Failed</span></td>
+                <td>5 hours ago</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="quick-actions">
+          <h2 class="section-title">Quick Actions</h2>
+          <ul class="action-list">
+            <li>
+              <span>Buy a phone number</span>
+              <button class="btn-primary">Search</button>
+            </li>
+            <li>
+              <span>Send a test message</span>
+              <button class="btn-primary">Send</button>
+            </li>
+            <li>
+              <span>Configure SIP trunk</span>
+              <button class="btn-secondary">Configure</button>
+            </li>
+            <li>
+              <span>View API credentials</span>
+              <button class="btn-secondary">View</button>
+            </li>
+            <li>
+              <span>Invite team member</span>
+              <button class="btn-secondary">Invite</button>
+            </li>
+          </ul>
+          <div class="alert alert-info" style="margin-top: var(--space-5);">
+            Your 10DLC campaign registration is pending review. <a href="#">Check status</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
