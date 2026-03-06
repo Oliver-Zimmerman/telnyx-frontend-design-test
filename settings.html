@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — Telnyx Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+@font-face {
+  font-family: "PP Formula";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  ascent-override: 120%;
+  src: url("./fonts/PP Formula Extrabold.woff2") format("woff2");
+}
+
+:root {
+  --page-background: #FEFDF5;
+  --main-primary: #101010;
+  --main-secondary: #FBFBFB;
+  --main-tertiary: #EEEEEE;
+  --main-quaternary: #DDDDDD;
+  --neutrals-primary-hover: #303030;
+  --neutrals-inactive: #949494;
+  --neutrals-outlines: #EBEBEB;
+  --neutrals-container: #FFFFFF;
+  --brand-primary: #00E3AA;
+  --brand-secondary: #101010;
+  --brand-tertiary: #19ca9d;
+  --feedback-success-outline: #00A37A;
+  --feedback-warning-outline: #c89d04;
+  --feedback-error-outline: #D40000;
+  --feedback-info-outline: #3434EF;
+  --feedback-neutral-outline: #D2CFBE;
+  --feedback-success-fill: #E6F6F2;
+  --feedback-warning-fill: #ffffe0;
+  --feedback-error-fill: #FDE6E6;
+  --feedback-info-fill: #EBEBFE;
+  --feedback-neutral-fill: #F5F3E4;
+  --text-links: #3434EF;
+  --delete-hover: #E95858;
+  --payment-hover: #26E7B7;
+  --generic-hover: rgba(150, 150, 150, 0.1);
+  --font-body: 'Inter', sans-serif;
+  --font-display: 'PP Formula', 'Inter', sans-serif;
+  --font-mono: 'Courier Prime', monospace;
+  --shadow-deep: 0 1.5px 2.5px rgba(0,0,0,0.1), 0 4.2px 8.4px rgba(0,0,0,0.1);
+  --shadow-shallow: 0 1.5px 2.5px rgba(0,0,0,0.2);
+  --transition-fast: 0.15s;
+  --transition-medium: 0.2s;
+}
+
+[data-theme="dark"] {
+  --page-background: #000000;
+  --main-primary: #e5e5ea;
+  --main-secondary: #000000;
+  --main-tertiary: #38383F;
+  --main-quaternary: #393942;
+  --neutrals-primary-hover: #cfcfd4;
+  --neutrals-inactive: #6E6E6E;
+  --neutrals-outlines: #525252;
+  --neutrals-container: #222227;
+  --brand-primary: #00E3AA;
+  --brand-secondary: #101010;
+  --feedback-success-outline: #00B386;
+  --feedback-warning-outline: #F5C20A;
+  --feedback-error-outline: #E95858;
+  --feedback-info-outline: #7E7EED;
+  --feedback-success-fill: #19302A;
+  --feedback-warning-fill: #3E361A;
+  --feedback-error-fill: #4A2929;
+  --feedback-info-fill: #323248;
+  --text-links: #8ab0f4;
+  --delete-hover: #D40000;
+  --payment-hover: #26E7B7;
+  --generic-hover: rgba(150, 150, 150, 0.2);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: var(--font-body);
+  background: var(--page-background);
+  color: var(--main-primary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+a { color: var(--text-links); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Header */
+.header {
+  height: 64px; background: var(--neutrals-container); border-bottom: 1px solid var(--neutrals-outlines);
+  display: flex; align-items: center; justify-content: space-between; padding: 0 24px; position: sticky; top: 0; z-index: 20;
+}
+.header-left { display: flex; align-items: center; gap: 32px; }
+.header-logo { color: var(--main-primary); display: flex; align-items: center; }
+.header-logo svg { height: 24px; width: auto; }
+.header-nav { display: flex; gap: 8px; }
+.header-nav a {
+  color: var(--neutrals-inactive); font-size: 14px; font-weight: 600; padding: 8px 12px;
+  border-radius: 24px; transition: all var(--transition-fast); text-decoration: none;
+}
+.header-nav a:hover { color: var(--main-primary); background: var(--generic-hover); text-decoration: none; }
+.header-nav a.active { color: var(--main-primary); background: var(--main-tertiary); }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.theme-toggle {
+  width: 32px; height: 32px; border-radius: 9999px; border: 1px solid var(--neutrals-outlines);
+  background: var(--neutrals-container); cursor: pointer; display: flex; align-items: center;
+  justify-content: center; font-size: 16px; transition: background var(--transition-fast);
+}
+.theme-toggle:hover { background: var(--main-tertiary); }
+.avatar {
+  width: 32px; height: 32px; border-radius: 9999px; background: var(--brand-primary);
+  color: var(--brand-secondary); display: flex; align-items: center; justify-content: center;
+  font-weight: 600; font-size: 13px;
+}
+
+/* Layout */
+.layout { display: flex; min-height: calc(100vh - 64px); }
+.sidebar {
+  width: 240px; background: var(--neutrals-container); border-right: 1px solid var(--neutrals-outlines);
+  padding: 24px 12px; flex-shrink: 0;
+}
+.sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+.sidebar-nav a {
+  display: block; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 400;
+  color: var(--neutrals-primary-hover); transition: all var(--transition-fast); text-decoration: none;
+}
+.sidebar-nav a:hover { background: var(--main-tertiary); color: var(--main-primary); text-decoration: none; }
+.sidebar-nav a.active { background: var(--main-tertiary); color: var(--main-primary); font-weight: 600; }
+.sidebar-section { font-size: 12px; font-weight: 600; color: var(--neutrals-inactive); padding: 16px 16px 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Content */
+.content { flex: 1; max-width: 1248px; padding: 48px 48px 96px; }
+.page-title { font-family: var(--font-display); font-size: 32px; font-weight: 800; margin-bottom: 8px; }
+.page-subtitle { color: var(--neutrals-primary-hover); font-size: 16px; margin-bottom: 40px; }
+
+/* Cards */
+.card {
+  background: var(--neutrals-container); border: 1px solid var(--neutrals-outlines);
+  border-radius: 4px; padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-deep);
+}
+.card-header { font-size: 18px; font-weight: 600; margin-bottom: 24px; color: var(--main-primary); }
+
+/* Form */
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 14px; font-weight: 700; color: var(--neutrals-primary-hover); margin-bottom: 8px; }
+.form-input {
+  width: 100%; padding: 9px 17px; border: 1px solid var(--neutrals-outlines); border-radius: 4px;
+  font-size: 14px; font-family: var(--font-body); color: var(--main-primary);
+  background: var(--neutrals-container); outline: none; transition: border-color var(--transition-fast);
+}
+.form-input:focus { border-color: var(--feedback-success-outline); }
+.form-input::placeholder { color: var(--neutrals-inactive); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+select.form-input { appearance: auto; cursor: pointer; }
+
+/* Toggle */
+.toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--neutrals-outlines); }
+.toggle-row:last-child { border-bottom: none; }
+.toggle-label { font-size: 14px; font-weight: 600; color: var(--main-primary); }
+.toggle-desc { font-size: 12px; color: var(--neutrals-inactive); margin-top: 4px; }
+.toggle-switch {
+  width: 44px; height: 24px; background: var(--neutrals-inactive); border-radius: 9999px;
+  position: relative; cursor: pointer; transition: background var(--transition-fast); flex-shrink: 0;
+}
+.toggle-switch.active { background: var(--feedback-success-outline); }
+.toggle-switch::after {
+  content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px;
+  background: white; border-radius: 9999px; transition: transform var(--transition-fast);
+  box-shadow: var(--shadow-shallow);
+}
+.toggle-switch.active::after { transform: translateX(20px); }
+
+/* Plan Card */
+.plan-banner {
+  background: var(--main-primary); border-radius: 8px; padding: 24px; color: var(--main-secondary);
+  margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;
+}
+[data-theme="dark"] .plan-banner { background: var(--neutrals-container); border: 1px solid var(--neutrals-outlines); color: var(--main-primary); }
+.plan-info h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; opacity: 0.7; }
+.plan-name { font-size: 24px; font-weight: 600; }
+.plan-price { font-size: 32px; font-weight: 600; }
+.plan-price span { font-size: 14px; font-weight: 400; opacity: 0.6; }
+.plan-badge {
+  display: inline-block; background: var(--feedback-success-fill); color: var(--feedback-success-outline);
+  padding: 4px 12px; border-radius: 24px; font-size: 12px; font-weight: 600; margin-top: 8px;
+  border: 1px solid var(--feedback-success-outline);
+}
+
+/* Usage bars */
+.usage-item { margin-bottom: 16px; }
+.usage-header { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; }
+.usage-header .label { color: var(--neutrals-primary-hover); }
+.usage-header .value { font-weight: 600; font-family: var(--font-mono); font-size: 13px; }
+.usage-bar { height: 8px; background: var(--main-tertiary); border-radius: 9999px; overflow: hidden; }
+.usage-fill { height: 100%; border-radius: 9999px; transition: width 0.6s ease; }
+.usage-fill.ok { background: var(--feedback-success-outline); }
+.usage-fill.warn { background: var(--feedback-warning-outline); }
+.usage-fill.danger { background: var(--feedback-error-outline); }
+
+/* Payment */
+.payment-method {
+  display: flex; align-items: center; gap: 16px; padding: 16px;
+  background: var(--page-background); border-radius: 4px; border: 1px solid var(--neutrals-outlines);
+}
+.payment-card-icon {
+  width: 48px; height: 32px; background: var(--feedback-info-outline); border-radius: 4px;
+  display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 11px;
+}
+.payment-details { flex: 1; }
+.payment-details .card-label { font-weight: 600; font-size: 14px; }
+.payment-details .card-expiry { color: var(--neutrals-inactive); font-size: 13px; }
+
+/* API Key */
+.api-key-row {
+  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+  background: var(--main-primary); border-radius: 4px; margin-bottom: 8px;
+}
+[data-theme="dark"] .api-key-row { background: var(--main-tertiary); }
+.api-key-row .key {
+  flex: 1; font-family: var(--font-mono); font-size: 14px;
+  color: var(--brand-primary); letter-spacing: 0.5px;
+}
+.api-key-row .key-label {
+  font-family: var(--font-body); font-size: 12px; font-weight: 600;
+  color: var(--neutrals-inactive); margin-right: 12px; white-space: nowrap;
+}
+.copy-btn {
+  padding: 4px 12px; background: transparent; color: var(--brand-primary);
+  border: 1px solid var(--brand-primary); border-radius: 24px; font-size: 12px;
+  font-weight: 600; cursor: pointer; font-family: var(--font-body);
+  transition: all var(--transition-fast);
+}
+.copy-btn:hover { background: var(--brand-primary); color: var(--brand-secondary); }
+
+/* Rate limits */
+.rate-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+.rate-card {
+  text-align: center; padding: 24px 16px; background: var(--page-background);
+  border-radius: 4px; border: 1px solid var(--neutrals-outlines);
+}
+.rate-card .number { font-size: 24px; font-weight: 600; color: var(--main-primary); font-family: var(--font-mono); }
+.rate-card .label { font-size: 12px; color: var(--neutrals-inactive); margin-top: 4px; }
+
+/* Buttons */
+.btn-primary {
+  background: var(--brand-primary); color: var(--brand-secondary); border: none;
+  border-radius: 24px; font-family: var(--font-body); font-weight: 600; font-size: 14px;
+  height: 32px; padding: 0 24px; cursor: pointer; text-transform: none;
+  transition: background var(--transition-fast);
+}
+.btn-primary:hover { background: var(--payment-hover); }
+.btn-secondary {
+  background: transparent; color: var(--main-primary); border: 1.6px solid currentColor;
+  border-radius: 24px; font-family: var(--font-body); font-weight: 600; font-size: 14px;
+  height: 32px; padding: 0 16px; cursor: pointer; text-transform: none;
+}
+.btn-secondary:hover { background: var(--generic-hover); }
+
+/* Save bar */
+.save-bar {
+  position: sticky; bottom: 0; background: var(--neutrals-container); padding: 16px 0;
+  border-top: 1px solid var(--neutrals-outlines); display: flex; justify-content: flex-end;
+  gap: 12px; margin-top: 24px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .content { padding: 32px 24px 96px; }
+  .form-row { grid-template-columns: 1fr; }
+  .rate-grid { grid-template-columns: 1fr; }
+  .plan-banner { flex-direction: column; gap: 16px; align-items: flex-start; }
+}
+@media (max-width: 600px) {
+  .header-nav { display: none; }
+  .content { padding: 24px 16px 96px; }
+  .page-title { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <div class="header-logo">
+      <svg viewBox="0 0 122 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#clip0_166_2044)">
+        <path d="M103.56 27.6351C103.56 28.7002 103.13 29.7218 102.365 30.4756C101.6 31.2293 100.562 31.6536 99.4789 31.6553H88.5157C88.5055 31.6553 88.4958 31.6513 88.4886 31.6442C88.4814 31.6372 88.4773 31.6276 88.4773 31.6175V28.0315C88.4773 28.0214 88.4814 28.0118 88.4886 28.0048C88.4958 27.9977 88.5055 27.9937 88.5157 27.9937H97.835C98.0503 27.9937 98.2635 27.9518 98.4622 27.8704C98.6609 27.789 98.8413 27.6697 98.9929 27.5194C99.1445 27.3691 99.2644 27.1907 99.3456 26.9946C99.4268 26.7985 99.4678 26.5886 99.4661 26.3768V23.9987C99.4661 23.9903 99.4627 23.9823 99.4567 23.9764C99.4507 23.9705 99.4426 23.9672 99.4341 23.9672C99.4256 23.9672 99.4175 23.9705 99.4115 23.9764C99.4055 23.9823 99.4021 23.9903 99.4021 23.9987C98.8524 24.8733 98.0783 25.5901 97.1576 26.0771C96.2369 26.5642 95.2021 26.8042 94.1572 26.7732C90.4666 26.7732 88.439 24.1371 88.439 20.1106V9.20135H88.4709H92.4686H92.5006V19.645C92.5006 22.0421 93.5304 23.3507 95.833 23.3507C98.4747 23.3507 99.2934 21.652 99.4533 20.205V19.9722V9.20135C99.4591 9.19803 99.4657 9.19629 99.4725 9.19629C99.4792 9.19629 99.4858 9.19803 99.4917 9.20135H103.508C103.514 9.19803 103.521 9.19629 103.528 9.19629C103.534 9.19629 103.541 9.19803 103.547 9.20135L103.56 27.6351Z" fill="currentColor"/>
+        <path d="M51.8909 18.8272H63.6792V16.8958C63.6792 11.7242 60.8585 8.89941 55.8182 8.89941C50.2599 8.89941 47.6055 11.9382 47.6055 16.7888V18.8272C47.6055 23.7345 50.2599 26.7732 55.8182 26.7732C60.673 26.7732 63.2187 24.4014 63.5449 20.853V20.1924H59.3937L59.3298 21.0166C59.3158 21.2027 59.2793 21.3864 59.221 21.564C58.8884 22.5517 57.8458 23.3318 55.8566 23.3318C52.9335 23.3318 51.8462 21.6835 51.8462 19.2299V18.8838C51.8458 18.8708 51.8501 18.858 51.8583 18.8477C51.8664 18.8373 51.878 18.8301 51.8909 18.8272ZM55.7287 12.3408C58.4023 12.3408 59.4769 13.706 59.4705 15.864C59.4691 15.8769 59.4633 15.8889 59.4539 15.898C59.4446 15.9072 59.4324 15.9129 59.4193 15.9143H51.9293C51.922 15.9144 51.9148 15.9129 51.9081 15.91C51.9015 15.9071 51.8955 15.9028 51.8907 15.8974C51.8858 15.8921 51.8822 15.8857 51.88 15.8789C51.8779 15.872 51.8772 15.8648 51.8782 15.8577C52.0572 13.7564 53.1702 12.3408 55.7287 12.3408Z" fill="currentColor"/>
+        <path d="M69.5062 4.01733H65.4126V26.4964H69.5062V4.01733Z" fill="currentColor"/>
+        <path d="M75.4991 9.16998H71.4375V26.4964H75.4991V16.1534C75.4991 14.6057 76.094 12.3157 79.1578 12.3157C81.4604 12.3157 82.4902 13.618 82.4902 16.0213V26.4964H86.5582V15.562C86.5582 11.5418 84.5242 8.89945 80.84 8.89945C79.7869 8.87263 78.7451 9.11756 77.8181 9.60985C76.8912 10.1021 76.1115 10.8246 75.5567 11.7054C75.5567 11.7137 75.5533 11.7217 75.5473 11.7276C75.5413 11.7335 75.5332 11.7369 75.5247 11.7369C75.5162 11.7369 75.5081 11.7335 75.5021 11.7276C75.4961 11.7217 75.4927 11.7137 75.4927 11.7054L75.4991 9.16998Z" fill="currentColor"/>
+        <path d="M111.043 17.5059C111.054 17.5229 111.059 17.5425 111.059 17.5626C111.059 17.5826 111.054 17.6022 111.043 17.6192L105.069 26.4963H109.546L113.384 20.7208C113.388 20.713 113.395 20.7064 113.403 20.7019C113.411 20.6973 113.42 20.6949 113.429 20.6949C113.438 20.6949 113.447 20.6973 113.455 20.7019C113.463 20.7064 113.469 20.713 113.474 20.7208L117.279 26.4963H122L116.051 17.6318C116.042 17.6155 116.037 17.5971 116.037 17.5783C116.037 17.5595 116.042 17.5411 116.051 17.5248L121.776 9.16987H117.132L113.736 14.4232C113.731 14.4297 113.725 14.435 113.718 14.4386C113.71 14.4423 113.702 14.4442 113.694 14.4442C113.686 14.4442 113.678 14.4423 113.671 14.4386C113.664 14.435 113.657 14.4297 113.653 14.4232L110.275 9.16357H105.344L111.043 17.5059Z" fill="currentColor"/>
+        <path d="M46.2428 22.9166H40.9019C40.4748 22.9167 40.0647 22.752 39.7598 22.4579C39.4548 22.1638 39.2792 21.7638 39.2709 21.3438V14.3541C39.2709 13.9286 39.4427 13.5205 39.7486 13.2197C40.0545 12.9188 40.4693 12.7498 40.9019 12.7498H46.2428V9.16368H40.9019C40.4693 9.16368 40.0545 8.99466 39.7486 8.6938C39.4427 8.39293 39.2709 7.98487 39.2709 7.55938V4.01733H35.1965V7.55938C35.1965 7.77059 35.1541 7.97972 35.0717 8.17478C34.9893 8.36983 34.8686 8.54697 34.7165 8.69603C34.5644 8.84508 34.3838 8.96312 34.1852 9.04338C33.9865 9.12363 33.7738 9.16451 33.559 9.16368H31.1221V12.7498H33.5718C34.0044 12.7498 34.4193 12.9188 34.7251 13.2197C35.031 13.5205 35.2029 13.9286 35.2029 14.3541V22.4762C35.2163 23.5482 35.6592 24.5716 36.4352 25.3243C37.2112 26.077 38.2578 26.4982 39.3476 26.4964H46.2428V22.9166Z" fill="currentColor"/>
+        <path d="M28.6725 24.4076C29.1614 23.5325 29.3005 22.5095 29.0627 21.5388C28.9945 21.2704 28.9002 21.0092 28.7812 20.7586C28.7436 20.6764 28.7009 20.5966 28.6533 20.5195L24.7772 13.3159H20.8115L24.8667 20.8656C24.994 21.085 25.061 21.3333 25.061 21.5859C25.061 21.8386 24.994 22.0869 24.8667 22.3063C24.7427 22.5113 24.5667 22.6811 24.3559 22.7991C24.1451 22.9171 23.9068 22.9793 23.6642 22.9795H19.0398C18.9886 23.6823 18.7667 24.3628 18.3927 24.9638C18.0188 25.5649 17.5036 26.0688 16.8906 26.4335H25.3912C25.9587 26.3963 26.5111 26.2374 27.0095 25.9679C27.7128 25.6271 28.2932 25.0826 28.6725 24.4076Z" fill="currentColor"/>
+        <path d="M6.93164 8.60373H10.8973L12.8737 4.98619C13.041 4.67398 13.2917 4.41261 13.5988 4.23028C13.906 4.04796 14.258 3.9516 14.6167 3.9516C14.9755 3.9516 15.3274 4.04796 15.6346 4.23028C15.9418 4.41261 16.1925 4.67398 16.3597 4.98619L18.2786 8.60373H22.2442L19.4299 3.3693C18.9633 2.50446 18.266 1.78092 17.413 1.27632C16.56 0.771729 15.5833 0.505127 14.5879 0.505127C13.5925 0.505127 12.6159 0.771729 11.7629 1.27632C10.9099 1.78092 10.2126 2.50446 9.74598 3.3693L6.93164 8.60373Z" fill="currentColor"/>
+        <path d="M10.1297 12.6869C10.1713 11.9869 10.3844 11.3072 10.7508 10.7058C11.1172 10.1044 11.6261 9.59904 12.2341 9.23291H4.55859V12.6869H10.1297Z" fill="currentColor"/>
+        <path d="M10.7632 12.9385V22.3756H12.5669C12.9431 22.3715 13.3075 22.2462 13.6044 22.0189C13.9013 21.7917 14.1143 21.475 14.2108 21.1173C14.2496 20.9801 14.2689 20.8383 14.2683 20.6958V15.0336C14.27 14.4189 14.5181 13.8296 14.9588 13.3938C15.3995 12.958 15.9972 12.7107 16.6221 12.7058H24.6494V9.23291H14.5242C13.5261 9.23458 12.5695 9.62573 11.8644 10.3205C11.1592 11.0152 10.7632 11.9568 10.7632 12.9385Z" fill="currentColor"/>
+        <path d="M0.394707 20.7588C0.2757 21.0094 0.181455 21.2706 0.113272 21.5389C-0.124338 22.5117 0.0147523 23.5367 0.503443 24.4141C0.883758 25.0867 1.46402 25.629 2.16646 25.9681C2.66486 26.2376 3.21721 26.3965 3.78471 26.4336H14.588C15.6058 26.4336 16.5819 25.889 17.3016 25.328C18.0214 24.6201 18.4257 23.66 18.4257 22.6588V13.3098H16.5964C16.1467 13.3212 15.7191 13.5042 15.404 13.82C15.0889 14.1358 14.9109 14.5597 14.9078 15.0022V20.6644C14.9061 21.2791 14.6567 21.8679 14.2142 22.3019C13.7718 22.7359 13.1724 22.9797 12.5476 22.9797H5.54368C5.30114 22.9795 5.06282 22.9173 4.85203 22.7993C4.64125 22.6813 4.46522 22.5115 4.34118 22.3065C4.21391 22.0859 4.14701 21.8366 4.14701 21.583C4.14701 21.3294 4.21391 21.0801 4.34118 20.8595L8.3964 13.3098H4.39875L0.522632 20.5134C0.477858 20.6015 0.433084 20.677 0.394707 20.7588Z" fill="currentColor"/>
+        </g>
+        <defs><clipPath id="clip0_166_2044"><rect width="122" height="32" fill="white"/></clipPath></defs>
+      </svg>
+    </div>
+    <nav class="header-nav">
+      <a href="#">Numbers</a>
+      <a href="#">Messaging</a>
+      <a href="#">Voice</a>
+      <a href="#">Analytics</a>
+      <a href="settings.html" class="active">Settings</a>
+    </nav>
+  </div>
+  <div class="header-right">
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" aria-label="Toggle dark mode">☀️</button>
+    <div class="avatar">SM</div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">Account</div>
+    <nav class="sidebar-nav">
+      <a href="#" class="active">General</a>
+      <a href="#">Notifications</a>
+      <a href="#">Security</a>
+    </nav>
+    <div class="sidebar-section">Billing</div>
+    <nav class="sidebar-nav">
+      <a href="#">Plan & Usage</a>
+      <a href="#">Payment Methods</a>
+      <a href="#">Invoices</a>
+    </nav>
+    <div class="sidebar-section">Developer</div>
+    <nav class="sidebar-nav">
+      <a href="#">API Keys</a>
+      <a href="#">Webhooks</a>
+      <a href="#">Logs</a>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <h1 class="page-title">Settings</h1>
+    <p class="page-subtitle">Manage your account, billing, and developer settings.</p>
+
+    <!-- General -->
+    <div class="card">
+      <h2 class="card-header">General</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" type="text" value="Sarah Mitchell">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" value="sarah.mitchell@acmevoip.com">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Company</label>
+          <input class="form-input" type="text" value="Acme VoIP Solutions">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input class="form-input" type="tel" value="+1 (415) 555-0142">
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="card">
+      <h2 class="card-header">Notifications</h2>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">SMS Alerts</div>
+          <div class="toggle-desc">Receive critical alerts via text message</div>
+        </div>
+        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Email Digests</div>
+          <div class="toggle-desc">Weekly summary of account activity</div>
+        </div>
+        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Webhook Notifications</div>
+          <div class="toggle-desc">Push events to your webhook endpoint</div>
+        </div>
+        <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+      </div>
+    </div>
+
+    <!-- Security -->
+    <div class="card">
+      <h2 class="card-header">Security</h2>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Two-Factor Authentication</div>
+          <div class="toggle-desc">Add an extra layer of security to your account</div>
+        </div>
+        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+      </div>
+      <div class="form-group" style="margin-top: 24px;">
+        <label class="form-label">API Key</label>
+        <div class="api-key-row">
+          <span class="key">sk_live_••••••••••••••••••3f7a</span>
+          <button class="copy-btn" onclick="this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy',1500)">Copy</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Session Timeout</label>
+        <select class="form-input">
+          <option>15 minutes</option>
+          <option selected>30 minutes</option>
+          <option>1 hour</option>
+          <option>4 hours</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Billing -->
+    <div class="card">
+      <h2 class="card-header">Billing</h2>
+      <div class="plan-banner">
+        <div class="plan-info">
+          <h3>Current Plan</h3>
+          <div class="plan-name">Business</div>
+          <div class="plan-badge">Active</div>
+        </div>
+        <div style="text-align: right;">
+          <div class="plan-price">$499<span>/mo</span></div>
+          <button class="btn-secondary" style="margin-top: 12px; color: var(--main-secondary); border-color: var(--main-secondary);">Upgrade Plan</button>
+        </div>
+      </div>
+
+      <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">Current Usage</h3>
+      <div class="usage-item">
+        <div class="usage-header"><span class="label">Voice Minutes</span><span class="value">12,847 / 25,000</span></div>
+        <div class="usage-bar"><div class="usage-fill ok" style="width: 51%"></div></div>
+      </div>
+      <div class="usage-item">
+        <div class="usage-header"><span class="label">SMS Messages</span><span class="value">7,234 / 10,000</span></div>
+        <div class="usage-bar"><div class="usage-fill warn" style="width: 72%"></div></div>
+      </div>
+      <div class="usage-item">
+        <div class="usage-header"><span class="label">Phone Numbers</span><span class="value">43 / 50</span></div>
+        <div class="usage-bar"><div class="usage-fill danger" style="width: 86%"></div></div>
+      </div>
+
+      <h3 style="font-size: 14px; font-weight: 600; margin: 24px 0 12px;">Payment Method</h3>
+      <div class="payment-method">
+        <div class="payment-card-icon">VISA</div>
+        <div class="payment-details">
+          <div class="card-label">Visa ending in 4242</div>
+          <div class="card-expiry">Expires 09/2027</div>
+        </div>
+        <button class="btn-secondary">Update</button>
+      </div>
+    </div>
+
+    <!-- API Keys -->
+    <div class="card">
+      <h2 class="card-header">API Keys</h2>
+      <div class="form-group">
+        <label class="form-label">Live Key</label>
+        <div class="api-key-row">
+          <span class="key-label">LIVE</span>
+          <span class="key">KEY_LIVE_a8f29c4e••••••••••••d91b</span>
+          <button class="copy-btn" onclick="this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy',1500)">Copy</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Test Key</label>
+        <div class="api-key-row">
+          <span class="key-label">TEST</span>
+          <span class="key">KEY_TEST_7b3d1f6a••••••••••••e42c</span>
+          <button class="copy-btn" onclick="this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy',1500)">Copy</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Webhook URL</label>
+        <input class="form-input" type="url" value="https://api.acmevoip.com/webhooks/telnyx">
+      </div>
+      <h3 style="font-size: 14px; font-weight: 600; margin-top: 24px;">Rate Limits</h3>
+      <div class="rate-grid">
+        <div class="rate-card">
+          <div class="number">1,000</div>
+          <div class="label">Requests / min</div>
+        </div>
+        <div class="rate-card">
+          <div class="number">50,000</div>
+          <div class="label">Requests / hr</div>
+        </div>
+        <div class="rate-card">
+          <div class="number">99.97%</div>
+          <div class="label">Uptime (30d)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="save-bar">
+      <button class="btn-secondary">Discard</button>
+      <button class="btn-primary">Save Changes</button>
+    </div>
+  </main>
+</div>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.getElementById('themeBtn');
+  if (html.getAttribute('data-theme') === 'dark') {
+    html.setAttribute('data-theme', 'light');
+    btn.textContent = '☀️';
+  } else {
+    html.setAttribute('data-theme', 'dark');
+    btn.textContent = '🌙';
+  }
+}
+</script>
+</body>
+</html>
