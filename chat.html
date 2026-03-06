@@ -269,7 +269,7 @@
     }
 
     /* ── Input ── */
-    .chat-input-area {
+    .chat.input-area { background: linear-gradient(180deg, #fafafe 0%, #ffffff 100%);
       padding: 16px 24px;
       background: #ffffff;
       border-top: 1px solid #e5e7eb;
@@ -451,7 +451,8 @@
     .file-icon.doc { background: #e8f0fe; }
     .file-icon.img { background: #fce8f0; }
     .file-icon.pdf { background: #ffeee5; }
-  </style>
+  .pulse { animation: pulse 2s infinite; } @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+</style>
 </head>
 <body>
 
