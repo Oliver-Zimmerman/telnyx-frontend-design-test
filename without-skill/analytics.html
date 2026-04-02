@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Dashboard — AI Slop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #fff;
+      padding: 24px;
+    }
+
+    .header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 28px;
+    }
+    .header h1 {
+      font-size: 28px; font-weight: 700;
+      background: linear-gradient(90deg, #fff, #ffd700);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .header .avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; cursor: pointer;
+      box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+    }
+
+    /* KPI Cards */
+    .kpi-row {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+      margin-bottom: 28px;
+    }
+    .kpi-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .kpi-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    }
+    .kpi-card .icon { font-size: 28px; margin-bottom: 8px; }
+    .kpi-card .label { font-size: 12px; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; }
+    .kpi-card .value { font-size: 32px; font-weight: 700; margin: 4px 0; }
+    .kpi-card .change { font-size: 13px; }
+    .kpi-card .change.up { color: #69ff69; }
+    .kpi-card .change.down { color: #ff6b6b; }
+
+    /* Chart area */
+    .chart-section {
+      display: grid; grid-template-columns: 2fr 1fr; gap: 16px;
+      margin-bottom: 28px;
+    }
+    .chart-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .chart-card h3 {
+      font-size: 16px; margin-bottom: 16px; font-weight: 600;
+    }
+
+    /* Fake bar chart */
+    .bar-chart { display: flex; align-items: flex-end; gap: 12px; height: 180px; padding-top: 8px; }
+    .bar-group { display: flex; flex-direction: column; align-items: center; flex: 1; }
+    .bar {
+      width: 100%; border-radius: 8px 8px 0 0;
+      transition: height 0.5s ease;
+    }
+    .bar-label { font-size: 11px; opacity: 0.6; margin-top: 6px; }
+
+    /* Fake donut chart */
+    .donut-container { display: flex; flex-direction: column; align-items: center; }
+    .donut {
+      width: 160px; height: 160px; border-radius: 50%;
+      background: conic-gradient(
+        #ff6b6b 0% 35%,
+        #ffd93d 35% 55%,
+        #69ff69 55% 78%,
+        #6bb5ff 78% 100%
+      );
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .donut::after {
+      content: ''; position: absolute;
+      top: 30px; left: 30px; right: 30px; bottom: 30px;
+      border-radius: 50%;
+      background: rgba(102, 126, 234, 0.9);
+    }
+    .donut-legend { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .legend-item { display: flex; align-items: center; gap: 4px; font-size: 12px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    /* Alerts / notifications */
+    .alerts-section { margin-bottom: 28px; }
+    .alerts-section h3 { font-size: 16px; margin-bottom: 12px; }
+    .alert {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px; border-radius: 16px;
+      margin-bottom: 8px;
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .alert-critical {
+      background: linear-gradient(135deg, rgba(255, 0, 0, 0.3), rgba(255, 107, 107, 0.2));
+      border-left: 4px solid #ff4444;
+    }
+    .alert-warning {
+      background: linear-gradient(135deg, rgba(255, 200, 0, 0.3), rgba(255, 217, 61, 0.2));
+      border-left: 4px solid #ffd93d;
+    }
+    .alert-success {
+      background: linear-gradient(135deg, rgba(0, 255, 100, 0.2), rgba(105, 255, 105, 0.15));
+      border-left: 4px solid #69ff69;
+    }
+    .alert-info {
+      background: linear-gradient(135deg, rgba(100, 150, 255, 0.3), rgba(107, 181, 255, 0.2));
+      border-left: 4px solid #6bb5ff;
+    }
+    .alert .icon { font-size: 22px; }
+    .alert .msg { flex: 1; }
+    .alert .msg .title { font-weight: 600; font-size: 14px; }
+    .alert .msg .desc { font-size: 12px; opacity: 0.7; }
+    .alert .time { font-size: 11px; opacity: 0.5; }
+
+    /* Table */
+    .table-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .table-card h3 { font-size: 16px; margin-bottom: 16px; }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.15); }
+    td { padding: 12px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .status-pill {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 600;
+    }
+    .status-active { background: linear-gradient(135deg, #69ff69, #00c853); color: #003300; }
+    .status-degraded { background: linear-gradient(135deg, #ffd93d, #ff9800); color: #4a3000; }
+    .status-down { background: linear-gradient(135deg, #ff6b6b, #ff1744); color: #fff; }
+
+    /* Form section */
+    .form-section {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      margin-top: 28px;
+    }
+    .form-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .form-card h3 { font-size: 16px; margin-bottom: 16px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 12px; opacity: 0.7; margin-bottom: 4px; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 10px 14px; border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff; font-family: 'Poppins', sans-serif; font-size: 14px;
+    }
+    .form-group input::placeholder { color: rgba(255, 255, 255, 0.4); }
+    .form-group input:focus { outline: none; border-color: #ffd93d; box-shadow: 0 0 15px rgba(255, 217, 61, 0.3); }
+    .btn-gradient {
+      padding: 12px 28px; border-radius: 14px; border: none;
+      background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+      color: #000; font-weight: 700; font-size: 14px; cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      box-shadow: 0 4px 20px rgba(255, 107, 107, 0.4);
+      transition: transform 0.2s;
+    }
+    .btn-gradient:hover { transform: scale(1.03); }
+
+    /* Disabled form */
+    .form-card.disabled { opacity: 0.5; pointer-events: none; }
+    .form-card.disabled input { background: rgba(255, 255, 255, 0.03); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>📊 Analytics Hub ✨</h1>
+    <div class="avatar">👤</div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="icon">📞</div>
+      <div class="label">Total Calls</div>
+      <div class="value">12,847</div>
+      <div class="change up">↑ 23% vs last week 🚀</div>
+    </div>
+    <div class="kpi-card">
+      <div class="icon">⚡</div>
+      <div class="label">Avg Latency</div>
+      <div class="value">142ms</div>
+      <div class="change down">↓ 8% slower 😟</div>
+    </div>
+    <div class="kpi-card">
+      <div class="icon">💰</div>
+      <div class="label">Revenue</div>
+      <div class="value">$48.2K</div>
+      <div class="change up">↑ 15% growth 🎉</div>
+    </div>
+    <div class="kpi-card">
+      <div class="icon">🔥</div>
+      <div class="label">Error Rate</div>
+      <div class="value">2.3%</div>
+      <div class="change down">↑ 0.4% increase 😬</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="chart-section">
+    <div class="chart-card">
+      <h3>📈 Weekly Call Volume</h3>
+      <div class="bar-chart">
+        <div class="bar-group"><div class="bar" style="height:65%;background:linear-gradient(to top,#ff6b6b,#ffd93d);"></div><div class="bar-label">Mon</div></div>
+        <div class="bar-group"><div class="bar" style="height:80%;background:linear-gradient(to top,#6bb5ff,#69ff69);"></div><div class="bar-label">Tue</div></div>
+        <div class="bar-group"><div class="bar" style="height:55%;background:linear-gradient(to top,#ff6b6b,#ffd93d);"></div><div class="bar-label">Wed</div></div>
+        <div class="bar-group"><div class="bar" style="height:90%;background:linear-gradient(to top,#6bb5ff,#69ff69);"></div><div class="bar-label">Thu</div></div>
+        <div class="bar-group"><div class="bar" style="height:70%;background:linear-gradient(to top,#ff6b6b,#ffd93d);"></div><div class="bar-label">Fri</div></div>
+        <div class="bar-group"><div class="bar" style="height:40%;background:linear-gradient(to top,#6bb5ff,#69ff69);"></div><div class="bar-label">Sat</div></div>
+        <div class="bar-group"><div class="bar" style="height:35%;background:linear-gradient(to top,#ff6b6b,#ffd93d);"></div><div class="bar-label">Sun</div></div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3>🍩 Traffic Sources</h3>
+      <div class="donut-container">
+        <div class="donut"></div>
+        <div class="donut-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b;"></div>API</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#ffd93d;"></div>WebRTC</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#69ff69;"></div>SIP</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#6bb5ff;"></div>PSTN</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  <div class="alerts-section">
+    <h3>🔔 Recent Alerts</h3>
+    <div class="alert alert-critical">
+      <div class="icon">🚨</div>
+      <div class="msg"><div class="title">SIP Gateway Down</div><div class="desc">us-east-1 SIP gateway is unreachable. Failover activated.</div></div>
+      <div class="time">2m ago</div>
+    </div>
+    <div class="alert alert-warning">
+      <div class="icon">⚠️</div>
+      <div class="msg"><div class="title">High Latency Detected</div><div class="desc">P99 latency exceeded 500ms on eu-west-1 cluster.</div></div>
+      <div class="time">15m ago</div>
+    </div>
+    <div class="alert alert-success">
+      <div class="icon">✅</div>
+      <div class="msg"><div class="title">Deployment Complete</div><div class="desc">v2.14.0 rolled out to all regions successfully.</div></div>
+      <div class="time">1h ago</div>
+    </div>
+    <div class="alert alert-info">
+      <div class="icon">ℹ️</div>
+      <div class="msg"><div class="title">Scheduled Maintenance</div><div class="desc">Database maintenance window: Saturday 2am-4am UTC.</div></div>
+      <div class="time">3h ago</div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card">
+    <h3>🌍 Regional Performance</h3>
+    <table>
+      <thead>
+        <tr><th>Region</th><th>Calls/min</th><th>Latency</th><th>Error Rate</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>🇺🇸 US East</td><td>2,340</td><td>89ms</td><td>0.8%</td><td><span class="status-pill status-active">Active ✨</span></td></tr>
+        <tr><td>🇪🇺 EU West</td><td>1,890</td><td>124ms</td><td>1.2%</td><td><span class="status-pill status-active">Active ✨</span></td></tr>
+        <tr><td>🇯🇵 AP Tokyo</td><td>760</td><td>198ms</td><td>3.1%</td><td><span class="status-pill status-degraded">Degraded ⚡</span></td></tr>
+        <tr><td>🇧🇷 SA East</td><td>0</td><td>—</td><td>100%</td><td><span class="status-pill status-down">Down 💀</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Forms -->
+  <div class="form-section">
+    <div class="form-card">
+      <h3>🔧 Create Alert Rule</h3>
+      <div class="form-group">
+        <label>Rule Name</label>
+        <input type="text" placeholder="e.g. High Error Rate Alert 🚨">
+      </div>
+      <div class="form-group">
+        <label>Metric</label>
+        <select>
+          <option>Error Rate (%)</option>
+          <option>Latency (ms)</option>
+          <option>Call Volume</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Threshold</label>
+        <input type="number" placeholder="5" value="5">
+      </div>
+      <button class="btn-gradient">Create Rule 🚀</button>
+    </div>
+    <div class="form-card disabled">
+      <h3>🔒 Disabled Section</h3>
+      <div class="form-group">
+        <label>API Key</label>
+        <input type="text" value="sk_live_abc123xyz789" disabled>
+      </div>
+      <div class="form-group">
+        <label>Webhook URL</label>
+        <input type="text" value="https://hooks.example.com/alerts" disabled>
+      </div>
+      <button class="btn-gradient" disabled>Save Changes ✨</button>
+    </div>
+  </div>
+
+</body>
+</html>
